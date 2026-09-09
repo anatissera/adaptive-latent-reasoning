@@ -1,0 +1,340 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% baposter Portrait Poster
+% Basado en el template de la clase de Aprendizaje Automático (VAE-ECG),
+% adaptado al proyecto final de NLP: razonamiento latente adaptativo.
+%
+% baposter Class Created by:
+% Brian Amberg (baposter@brian-amberg.de)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+% OJO: el papel y fontscale van juntos. fontscale se escaló para preservar el
+% ancho de columna del diseño A0 original (0.31 * 841/594 = 0.4389). Si cambiás
+% a0paper<->a1paper sin tocar fontscale, el texto desborda las cajas.
+\documentclass[portrait,a1paper,fontscale=0.4389]{baposter}
+
+\usepackage[absolute,overlay]{textpos} % For absolute positioning
+\usepackage{graphicx} % Required for including images
+\graphicspath{{figures/}} % Directory in which figures are stored
+
+\usepackage{amsmath} % For typesetting math
+\usepackage{amssymb} % Adds new symbols to be used in math mode
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{enumitem} % Used to reduce itemize/enumerate spacing
+\usepackage{booktabs} % Top and bottom rules for tables
+\usepackage{palatino} % Use the Palatino font
+\usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
+
+\usepackage{multicol} % Required for multiple columns
+\setlength{\columnsep}{1.5em} % Slightly increase the space between columns
+\setlength{\columnseprule}{0mm} % No horizontal rule between columns
+
+\usepackage{tikz} % Required for flow chart
+\usetikzlibrary{shapes,arrows,positioning} % Tikz libraries required for the flow chart
+
+\usepackage{pgfplots} % Barras de pasos por dificultad
+\pgfplotsset{compat=1.18}
+
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{textcomp}
+\usepackage[spanish,es-noshorthands]{babel}
+% Los operadores acentuados de babel-spanish (\max -> "máx") usan un helper
+% frágil que rompe dentro de argumentos móviles; se desactivan globalmente.
+% Ojo también: \% dentro de modo matemático rompe con babel-spanish
+% ("Incompatible glue units"); escribir siempre $-32$\,\% y no $-32\,\%$.
+\unaccentedoperators
+
+\newcommand{\compresslist}{ % Define a command to reduce spacing within itemize/enumerate environments
+\setlength{\itemsep}{1pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+}
+
+\definecolor{lightblue}{rgb}{0.145,0.6666,1} % Defines the color used for content box headers
+\definecolor{udesa}{RGB}{0, 18, 187}
+
+% Un color por método de origen, para tintar los términos de la loss.
+% Los usa la ecuación de \mathcal{L} y su leyenda; si se sacan los \textcolor
+% de esa ecuación, este bloque y \lkey se pueden borrar.
+\definecolor{pnBlue}{HTML}{2E3566}   % PonderNet
+\definecolor{scRasp}{HTML}{B0485F}   % SIM-CoT
+\definecolor{codGreen}{HTML}{3F6B52} % CODI
+
+% Cuadradito de color para la leyenda de la loss.
+\newcommand{\lkey}[1]{\textcolor{#1}{\rule[0.02em]{0.62em}{0.62em}}}
+
+\begin{document}
+
+\begin{poster}
+{
+headerborder=closed, % Adds a border around the header of content boxes
+colspacing=1em, % Column spacing
+bgColorOne=white, % Background color for the gradient on the left side of the poster
+bgColorTwo=white, % Background color for the gradient on the right side of the poster
+borderColor=udesa, % Border color
+headerColorOne=udesa, % Background color for the header in the content boxes (left side)
+headerColorTwo=udesa, % Background color for the header in the content boxes (right side)
+headerFontColor=white, % Text color for the header text in the content boxes
+boxColorOne=white, % Background color of the content boxes
+textborder=rounded, % Format of the border around content boxes
+eyecatcher=true, % Set to false for ignoring the left logo in the title and move the title left
+headerheight=0.1\textheight, % Height of the header
+headershape=roundedright, % Specify the rounded corner in the content box headers
+headerfont=\Large\bf, % Large, bold and sans serif font in the headers of content boxes
+linewidth=2pt, % Width of the border lines around content boxes
+boxpadding=1.1em % Margen interno entre el texto y el borde de cada caja (default de baposter: 0.5em)
+}
+%----------------------------------------------------------------------------------------
+%	Título
+%----------------------------------------------------------------------------------------
+%
+{\includegraphics[height=7em]{figures/UDESA.png}} % First university/lab logo on the left
+{\large{I400 - Procesamiento del Lenguaje Natural - Universidad de San Andrés - 2026}\vspace{0.3cm}\\\huge\bf{Razonamiento latente adaptativo: \emph{halting} probabilístico tipo PonderNet sobre cadenas de pensamiento implícitas}\vspace{0.3cm}} % Poster title
+{\normalsize Ana Paula Tissera, Valentino Arbelaiz Alberti, Franco Amato de Lusarreta, Naomi Couriel, Juan Cruz Giner Pulero} % Author names
+{} % Second university/lab logo on the right (empty)
+
+%----------------------------------------------------------------------------------------
+%	Columna 0: Introducción / Objetivos / Opción A / Referencias
+%----------------------------------------------------------------------------------------
+
+
+\headerbox{El problema}{name=resumen,column=0,row=0}{
+
+\hspace*{0.5em} El \emph{chain-of-thought latente} (Coconut, CODI, SIM-CoT) razona con vectores continuos en vez de texto, por un costo mucho menor que el CoT explícito. Pero fija el presupuesto de antemano y \textbf{lo aplica por igual a toda entrada}. Lo hacemos \textbf{adaptativo por instancia}, en dos ejes: los pasos latentes $K$ y los vectores por paso $c$.
+}
+
+\headerbox{1 \textperiodcentered\ \textquestiondown Dificultad predecible?}{name=opciona,column=0,below=resumen}{
+
+\vspace{-0.3em}
+\begin{center}
+\includegraphics[width=0.8\linewidth]{paperfigures/k_sweep_kstar.png}\hfill
+\end{center}
+\vspace{-0.5em}
+
+\vspace{-1.5em}
+\begin{center}
+\includegraphics[width=0.8\linewidth]{paperfigures/k_sweep_accuracy.png}
+\end{center}
+\vspace{-0.5em}
+
+\hspace*{0.5em} CODI forzando $k$ ($n{=}7473$): la accuracy sube 23 puntos hasta $k\approx5$--$6$ y satura. Pero el óptimo $k^*$ por instancia está muy \textbf{desbalanceado} ($66$\,\% resuelve con $k^*{=}1$): \textbf{hay margen para adaptar el presupuesto}.
+
+\vspace{0.15em}
+\hspace*{0.5em} 
+Un clasificador entrenado para predecir $k^*$ a partir de \emph{embeddings} congelados (MiniLM) no supera a la clase mayoritaria (RF: $0.661$; LR: $0.210$). La dificultad \textbf{no puede leerse \emph{upfront}}: hay que decidir \emph{durante} el razonamiento.
+}
+
+% \headerbox{Accuracy por dificultad}{name=accdiff,column=0,below=opciona}{
+
+% \vspace{-0.25em}
+% \begin{center}
+% \includegraphics[width=1.0\linewidth]{paperfigures/accuracy_by_difficulty.png}
+% \end{center}
+% \vspace{-0.45em}
+% {\footnotesize \hspace*{0.5em} El modelo adaptativo empata al baseline de $K$ fijo \textbf{en cada nivel de dificultad}, no solo en el agregado.}
+% }
+
+\headerbox{Referencias}{name=ref,column=0,below=opciona}{
+
+\renewcommand{\section}[2]{\vskip 0.05em} % Get rid of the default "References" section title
+
+\footnotesize
+\begin{thebibliography}{9}
+\setlength{\itemsep}{9pt}
+\setlength{\parskip}{0pt}
+
+\bibitem{hao2024coconut}
+Hao et al.
+\textit{Training Large Language Models to Reason in a Continuous Latent Space} (Coconut), 2024.
+
+\bibitem{shen2025codi}
+Shen et al.
+\textit{CODI: Compressing Chain-of-Thought into Continuous Space via Self-Distillation}, 2025.
+
+\bibitem{wei2025simcot}
+Wei et al.
+\textit{SIM-CoT: Supervised Implicit Chain-of-Thought}, 2025.
+
+\bibitem{banino2021pondernet}
+Banino, Balaguer y Blundell.
+\textit{PonderNet: Learning to Ponder}, 2021.
+
+\end{thebibliography}
+}
+
+%----------------------------------------------------------------------------------------
+%	Columna 1: Método
+%----------------------------------------------------------------------------------------
+
+\headerbox{Método: \emph{halting} adaptativo}{name=metodo,column=1}{
+
+\vspace{-0.25em}
+\begin{center}
+\includegraphics[width=\linewidth]{paperfigures/latent_reasoning_schematic.png}
+\end{center}
+\vspace{-0.1em}
+
+\hspace*{0.5em} Probabilidad de parada condicional por paso, y distribución de parada de PonderNet (frontera absorbente en $K$):
+\vspace{-0.3cm}
+
+\[
+  \lambda_k = \sigma\!\left(\texttt{halt\_head}(h_k)\right)
+\]
+\vspace{-0.62cm}
+\[
+  p_k = \big(\textstyle\prod_{j<k}(1-\lambda_j)\big)\,\lambda_k .
+\]
+\vspace{-0.35cm}
+
+\hspace*{0.5em} La función objetivo \textbf{combina términos de los tres métodos}:
+
+\vspace{-0.45cm}
+\[
+  \mathcal{L} =
+  \textcolor{pnBlue}{\textstyle\sum_k p_k\,\mathcal{L}_{\text{ans}}^{(k)} + \gamma\,\mathrm{KL}_{\text{geom}}}
+  + \textcolor{scRasp}{\beta\,\mathcal{L}_{\text{step}}}
+  + \textcolor{codGreen}{\mathcal{L}_{\text{distill}} + \mathcal{L}_{\text{ref}}} .
+\]
+\vspace{-0.85cm}
+
+\begin{center}
+{\footnotesize \lkey{pnBlue}~PonderNet \quad \lkey{scRasp}~SIM-CoT \quad \lkey{codGreen}~CODI}
+\end{center}
+\vspace{-0.85em}
+
+\begin{itemize}[left=0.45em, rightmargin=0.6em]\compresslist
+  \item $\gamma$ \textbf{controla el cómputo}: regula el prior geométrico y, con él, cuánto se acorta la cadena.
+  \item En inferencia se detiene cuando la masa acumulada de parada supera un umbral (por defecto $0.5$); $K_{\max}$ es el tope.
+  %En inferencia, el razonamiento se detiene cuando la masa acumulada de parada supera un umbral (por defecto $0.5$); $K_{\max}$ fija el límite superior.
+\end{itemize}
+}
+
+
+
+\headerbox{Prior geométrico por instancia}{name=prior,column=1,below=metodo}{
+\vspace{-0.1em}
+\hspace*{0.5em} En lugar de usar un prior geométrico global, hacemos que el presupuesto esperado dependa de cada instancia. Para ello, lo parametrizamos como una función afín del número de operaciones $n_i$:
+
+\vspace{-0.63cm}
+\[
+  \texttt{geom\_mean}_i = \mathrm{clamp}\big(\alpha\, n_i + \beta,\; \beta,\; K_{\max}\big).
+\]
+\vspace{-0.9cm}
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{paperfigures/step_distribution.png}
+\end{center}
+\vspace{-0.55cm}
+{\footnotesize \textbf{Figura.} Distribución de $n_i$ en GSM8k-Aug ($\mu{=}1.59$).}
+}
+
+%----------------------------------------------------------------------------------------
+%	Columna 2: Setup / Opción B / Conclusiones / Placeholder
+%----------------------------------------------------------------------------------------
+
+\headerbox{Configuración experimental}{name=setup,column=2}{
+
+\vspace{-0.3em}
+{\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{\hspace{0.5em}}>{\bfseries}l@{\hspace{0.6em}}p{0.6\linewidth}@{}}
+Datos    & GSM8k-Aug (Deng et al.); $\sim$385k ejemplos de \emph{train}. El tamaño de entrenamiento varía según el experimento: los modelos de la banda de resultados usan 100k de \emph{train}, \textbf{test de 1319} \\
+Modelo   & GPT-2 124M, \emph{warm-start} del checkpoint CODI de SIM-CoT %. Afinamos la \textbf{red completa} (no solo adaptadores) junto con la halting head, con un tope de $K_{\max}{=}12$ pasos latentes. 
+\\
+Ajuste   & red completa $+$ halting head; tope $K_{\max}{=}12$ \\
+Eval     & \emph{greedy}, una pasada, \texttt{batch\_size}$=1$ \\
+Selección & epoch y umbral en validación aparte (500 ej.) \\
+\end{tabular}}
+
+\vspace{0.35em}
+\hspace*{0.5em} \textbf{Baseline ($K$ fijo $=6$): 39.50\,\%.}
+}
+
+\headerbox{3 \textperiodcentered\ El otro eje: vectores por paso ($c$)}{name=opcionb,column=2,below=setup}{
+
+\vspace{-0.3em}
+\hspace*{0.5em} Cada paso usa hasta $M$ sub-vectores; un MLP destila la pérdida de reconstrucción del decoder ($\hat{\mathcal{L}} = \mathrm{MLP}(h)$) y el paso termina cuando $\hat{\mathcal{L}}$ converge.
+
+\vspace{-0.3em}
+\begin{center}
+\small
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Init $\times$ granularidad} & $c{=}1$ & $c{=}2$ & $c{=}3$ & $\Delta_{2\rightarrow3}$ \\
+\midrule
+warm $+$ atómica & 27.5 & 39.4 & 39.9 & $+0.5$ \\
+warm $+$ gruesa & 25.5 & 36.6 & \textbf{40.3} & $+3.7$ \\
+\emph{cold} $+$ gruesa & 5.3 & 5.5 & 5.5 & n/d \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{-0.2em}
+
+\hspace*{0.5em} Con pasos atómicos la accuracy \textbf{satura} en $c{=}2$. Con pasos gruesos la mejora reaparece ($2.7\sigma$ sobre parada aleatoria), pero es chica.
+
+\vspace{0.15em}
+\hspace*{0.5em} \textbf{La variabilidad parece estar en \# pasos, más que en la complejidad de cada uno.}
+}
+
+
+
+
+\headerbox{Conclusiones}{name=conclu,column=2,below=opcionb}{
+\vspace{-0.2cm}
+\begin{itemize}[left=0.45em, rightmargin=0.6em]\compresslist
+    \item El \emph{halting} aprendido \textbf{iguala al baseline de $K$ fijo} ($\approx 39.5$\,\% en test) recortando \textbf{cerca de la mitad de los pasos latentes} ($3.01$ vs.\ $6$).
+    \item Dos resultados negativos informativos: la dificultad no es legible \emph{upfront}; el eje $c$ no tiene margen en GSM8k-Aug.
+    \item A futuro: comparación justa entrenando GPT-2 \textbf{desde cero} (sin \emph{warm-start}, train completo, 40 épocas), otros backbones y tareas.
+\end{itemize}
+}
+
+%----------------------------------------------------------------------------------------
+%	Resultados (banda inferior, columnas 0-2, anclada al pie)
+%----------------------------------------------------------------------------------------
+
+\headerbox{2 \textperiodcentered\ Resultado principal: \emph{halting} adaptativo en test ($n{=}1319$): la mitad del cómputo, sin perder accuracy}{name=resultados,column=0,span=3,above=bottom}{
+
+\begin{minipage}[c]{0.345\textwidth}
+\begin{center}
+{\normalsize\textbf{Accuracy vs.\ cómputo}}\\[0.3em]
+\includegraphics[width=\textwidth]{paperfigures/poster_frontier_crop.png}
+\end{center}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.315\textwidth}
+\begin{center}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Umbral} & \textbf{M0} & \textbf{M1} & \textbf{M2} \\
+                & $\alpha1.0,\gamma.05$ & $\alpha1.0,\gamma.10$ & $\alpha0.6,\gamma.10$ \\
+\midrule
+0.3 & 39.1 @ 3.34 & 39.1 @ 2.60 & 38.4 @ \textbf{2.10} \\
+0.4 & 39.6 @ 3.86 & 39.4 @ 3.16 & 39.4 @ \textbf{2.52} \\
+0.5 & 40.0 @ 4.46 & 39.4 @ 3.73 & \textbf{39.9 @ 3.01} \\
+0.8 & 40.2 @ 6.97 & 39.7 @ 6.39 & 40.0 @ 4.98 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.4em}
+\small \emph{Accuracy (\%) @ pasos latentes promedio}. M0/M1/M2 son el mismo modelo adaptativo con distinta intensidad $\gamma$ del regularizador y pendiente $\alpha$ del prior; baseline de $K$ fijo: $39.5$ @ $6.0$.
+\end{center}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.31\textwidth}
+\begin{center}
+\includegraphics[width=\textwidth]{paperfigures/joint_matrix_ap.png}
+
+\vspace{0.2em}
+\small Pasos usados vs.\ dificultad (M2, umbral $0.5$, test): la masa sigue la diagonal. \textbf{Spearman $= +0.626$}: el cómputo se asigna por dificultad, no de forma uniforme.
+\end{center}
+\end{minipage}
+}
+\end{poster}
+
+\end{document}
