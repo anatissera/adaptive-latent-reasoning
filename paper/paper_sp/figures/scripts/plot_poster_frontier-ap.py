@@ -53,11 +53,11 @@ def plot(d, out_path, profile="poster"):
     knee_s, knee_a = 3.011, 39.88  # M2 @ umbral 0.5
     ax.annotate("Modelo adaptativo\n3 pasos", xy=(knee_s, knee_a),
                 xytext=(2.02, 40.55), ha="left", va="center",
-                fontsize=23, color=BLUE,
+                fontsize=26, color=BLUE,
                 arrowprops=dict(arrowstyle="-", color=BLUE, lw=1.3))
     ax.annotate("Baseline $K$ fijo\n6 pasos", xy=(base_s, base_a),
                 xytext=(5.55, 38.55), ha="center", va="center",
-                fontsize=23, color=RED,
+                fontsize=26, color=RED,
                 arrowprops=dict(arrowstyle="-", color=RED, lw=1.3))
 
     # flecha del ahorro entre los dos puntos comparables
@@ -65,13 +65,13 @@ def plot(d, out_path, profile="poster"):
                 arrowprops=dict(arrowstyle="-|>", color=TEXT, lw=1.9,
                                 shrinkA=0, shrinkB=0), zorder=7)
     ax.text((knee_s + base_s) / 2, base_a + 0.13, "$-$50% cómputo",
-            ha="center", va="bottom", fontsize=23, color=TEXT)
+            ha="center", va="bottom", fontsize=26, color=TEXT)
 
-    ax.set_xlabel("Pasos latentes por problema (cómputo)", fontsize=21, color=TEXT)
-    ax.set_ylabel("Accuracy (%)", fontsize=21, color=TEXT)
+    ax.set_xlabel("Pasos latentes por problema (cómputo)", fontsize=28, color=TEXT)
+    ax.set_ylabel("Accuracy (%)", fontsize=28, color=TEXT)
     ax.set_xlim(1.6, 6.6)
     ax.set_ylim(37.8, 40.9)
-    ax.tick_params(colors=TEXT, labelsize=18)
+    ax.tick_params(colors=TEXT, labelsize=26, width=1.6, length=6)
     ax.set_axisbelow(True)
     for spine in ("top", "right"):
         ax.spines[spine].set_visible(False)

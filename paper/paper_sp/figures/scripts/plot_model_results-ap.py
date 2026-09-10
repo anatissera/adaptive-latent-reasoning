@@ -89,27 +89,27 @@ def plot_accuracy_by_difficulty(adapt, base, out_path, FS):
     ya = [100 * np.mean(acc_a[x]) if acc_a[x] else 0 for x in xs]
     yb = [100 * np.mean(acc_b[x]) if acc_b[x] else 0 for x in xs]
 
-    fig, ax = plt.subplots(figsize=(6.2, 3.6))
+    fig, ax = plt.subplots(figsize=(9.6, 5.6))
     w = 0.38
     idx = np.arange(len(xs))
     ax.bar(idx - w / 2, ya, width=w, color=BLUE, zorder=2, label=ADAPT_LABEL)
     ax.bar(idx + w / 2, yb, width=w, color=GRAY, zorder=2, label=BASE_LABEL)
 
     for i, (a, b) in enumerate(zip(ya, yb)):
-        ax.text(i - w / 2, a + 1.0, f"{a:.0f}", ha="center", va="bottom",
-                fontsize=FS["tick"] * 0.72, color=BLUE)
-        ax.text(i + w / 2, b + 1.0, f"{b:.0f}", ha="center", va="bottom",
-                fontsize=FS["tick"] * 0.72, color=TEXT)
+        ax.text(i - w / 2, a + 1.5, f"{a:.0f}", ha="center", va="bottom",
+                fontsize=FS["tick"] * 0.9, color=BLUE)
+        ax.text(i + w / 2, b + 1.5, f"{b:.0f}", ha="center", va="bottom",
+                fontsize=FS["tick"] * 0.9, color=TEXT)
 
     ax.set_xticks(idx)
     ax.set_xticklabels(labels)
     ax.set_xlabel(r"Pasos de razonamiento del dataset (dificultad)", fontsize=FS["label"], color=TEXT)
     ax.set_ylabel("Accuracy (%)", fontsize=FS["label"], color=TEXT)
-    ax.set_ylim(0, 72)
+    ax.set_ylim(0, 84)
     ax.legend(loc="upper right", frameon=False, fontsize=FS["legend"])
     style_axes(ax, FS["tick"])
     fig.tight_layout()
-    fig.savefig(out_path, dpi=200)
+    fig.savefig(out_path, dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f"[A] accuracy_by_difficulty -> {out_path}")
 
@@ -280,6 +280,11 @@ if __name__ == "__main__":
 
     figstyle.set_style(args.profile)
     FS = figstyle.sizes(args.profile)
+    if args.profile == "poster":
+        # figstyle.sizes() da los mismos tamanos para paper y poster (solo
+        # cambia la tipografia); para las figuras que van al poster A1 hace
+        # falta texto bastante mas grande que en el informe.
+        FS = {"label": 28, "tick": 24, "legend": 22, "annotate": 24}
     adapt = load(args.results_dir / args.adapt / "instance_results.json")
     base = load(args.results_dir / "baseline" / "instance_results.json")
     args.out_dir.mkdir(parents=True, exist_ok=True)
